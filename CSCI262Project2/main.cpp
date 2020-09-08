@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
 
     // draw map and find paths, returning best optimal path cost
     int optimal = p.run(data_file_name, save_file_name, solution_choice == "r");
+   
 
     if (optimal > 0) {
         cout << "Best optimal path total: " << optimal << endl;
