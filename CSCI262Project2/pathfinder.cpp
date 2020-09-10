@@ -23,16 +23,16 @@ pathfinder::pathfinder() { ; }
 
 // public run() method - invokes private methods to do everything;
 // returns the total elevation change cost of the best optimal path.
-int pathfinder::run(string data_file_name, string save_file_name, bool use_recursion) {
+int pathfinder::run(string data_file_name, string save_file_name, bool use_dynamic) {
     // suggested implementation - modify as desired!
-    _use_recursion = use_recursion;
+    _use_dynamic = use_dynamic;
     if (!_read_data(data_file_name)) {
         cout << "Error reading map data from \"" << data_file_name << "\"!" << endl;
         return -1;
     }
 
     _draw_map();
-
+    drawtables();
     int best_cost = _draw_paths();
 
     _save_image(save_file_name);
@@ -94,7 +94,7 @@ void pathfinder::_draw_map() {
     //from min, max, determine a scaling factor for data to shift
     //       elevations into 0 - 255 range
     float factor =  (_max - _min)/255;
-    // TODO: for each elevation point, determine its grayscale value and set the Picture point
+    //for each elevation point, determine its grayscale value and set the Picture point
     for (int i = 0; i < _height; i++)
     {
         for (int j = 0; j < _width; j++)
@@ -112,34 +112,29 @@ int pathfinder::_draw_paths() {
     // based on the _use_recursion field, compute minimum cost for every point on map using either
     //  recursion or dynamic programming. Keep track of next move necessary to attain min cost.
     //  This will require additional data structures!
-    int lowest_cost = 10000000;
+    
     for (int i = 0; i < _height; i++)
     {
-        int cost = costtoeast(i, 0, 0);
-        if (cost < lowest_cost)
-        {
-            lowest_cost = cost;
-        }
+        
 
     }
-    cout << lowest_cost;
+    
     return 0;
 }
-int pathfinder::costtoeast(int row, int col, int cost)
+int pathfinder::costtoeast(int row, int col)
 {
     int cost1, cost2, cost3;
-    if (col == _width - 1)
+    if (col = _width - 1)
     {
-        cost1 = 0;
-        cost2 = 0;
-        cost3 = 0;
+        _costs[row][col] = 0;
+        _direction[row][col] = 0;
     }
-    else if (col < _width - 1)
+    if (col < _width)
     {
-        cost1 = abs(_elevations[row][col] - _elevations[row][col + 1]) + costtoeast(row, col + 1, cost);
-        if (row < _height-1)
+        cost1 = abs(_elevations[row][col] - _elevations[row][col + 1]);
+        if (row < _height - 1)
         {
-            cost2 = abs(_elevations[row][col] - _elevations[row+1][col + 1]) + costtoeast(row+1, col + 1, cost);
+            cost2 = abs(_elevations[row][col] - _elevations[row + 1][col + 1]);
         }
         else
         {
@@ -147,28 +142,39 @@ int pathfinder::costtoeast(int row, int col, int cost)
         }
         if (row > 0)
         {
-            cost3 = abs(_elevations[row][col] - _elevations[row-1][col + 1]) + costtoeast(row-1, col + 1,cost);
+            cost3 = abs(_elevations[row][col] - _elevations[row - 1][col + 1]);
         }
         else
         {
             cost3 = 1000000;
         }
     }
-
     if ((cost1 < cost2) && (cost1 < cost3))
     {
-        cost += cost1;
-        return cost;
+        
+        _costs[row][col]= cost1 +_costs[row][col+1];
+       _direction[row][col] = 0;
     }
     else if ((cost2 < cost1) && (cost2 < cost3))
     {
-        cost += cost2;
-        return cost;
+        _costs[row][col] = cost2 + _costs[row+1][col+1];
+        _direction[row][col] = 1;
     }
     else
     {
-        cost += cost3;
-        return cost;
+        _costs[row][col] = cost3 + _costs[row - 1][col + 1];
+        _direction[row][col] = -1;
+    }
+}
+void pathfinder::drawtables()
+{
+    
+    for (int j = _width-1; j > 0; j--)
+    {
+        for (int i = _height - 1; i > 0; i--)
+        {
+            costtoeast(i, j);
+        }
     }
 }
 

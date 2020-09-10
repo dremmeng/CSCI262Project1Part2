@@ -44,4 +44,13 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="data\colorado.dat" />
+    <None Include="data\example.dat" />
+    <None Include="data\example2.dat" />
+    <None Include="data\grand_canyon.dat" />
+    <None Include="data\grand_canyon_hires.dat" />
+    <None Include="data\kilimanjaro.dat" />
+    <None Include="data\kilimanjaro_hires.dat" />
+  </ItemGroup>
 </Project>
