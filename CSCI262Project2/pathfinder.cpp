@@ -127,8 +127,7 @@ int pathfinder::_draw_paths() {
 
     }
     colorpaths(255, 255, 0, lowest_cost_height, 0);
-    cout << lowest_cost << endl;
-    return 0;
+    return lowest_cost;
 }
 void pathfinder::costtoeast(int row, int col)
 {
