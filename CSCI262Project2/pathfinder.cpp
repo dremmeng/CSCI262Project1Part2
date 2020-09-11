@@ -57,6 +57,8 @@ bool pathfinder::_read_data(string data_file_name) {
     file >> str;
     file >> _height;
     _elevations = vector<vector<int>>(_height, vector<int>(_width));
+    _costs = vector<vector<int>>(_height, vector<int>(_width));
+    _direction = vector<vector<int>>(_height, vector<int>(_width));
     // read in and store elevation data
     for (int i = 0; i < _height; i++)
     {
@@ -112,24 +114,31 @@ int pathfinder::_draw_paths() {
     // based on the _use_recursion field, compute minimum cost for every point on map using either
     //  recursion or dynamic programming. Keep track of next move necessary to attain min cost.
     //  This will require additional data structures!
-    
+    int lowest_cost = 100000000;
+    int lowest_cost_height = 0;
     for (int i = 0; i < _height; i++)
     {
-        
+        colorpaths(0, 0, 255, i, 0);
+        if (_costs[i][0] < lowest_cost)
+        {
+            lowest_cost = _costs[i][0];
+            lowest_cost_height = i;
+        }
 
     }
-    
+    colorpaths(255, 255, 0, lowest_cost_height, 0);
+    cout << lowest_cost << endl;
     return 0;
 }
-int pathfinder::costtoeast(int row, int col)
+void pathfinder::costtoeast(int row, int col)
 {
-    int cost1, cost2, cost3;
+    int cost1 =0, cost2=0, cost3=0;
     if (col = _width - 1)
     {
         _costs[row][col] = 0;
         _direction[row][col] = 0;
     }
-    if (col < _width)
+    else if (col < _width-1)
     {
         cost1 = abs(_elevations[row][col] - _elevations[row][col + 1]);
         if (row < _height - 1)
@@ -160,10 +169,14 @@ int pathfinder::costtoeast(int row, int col)
         _costs[row][col] = cost2 + _costs[row+1][col+1];
         _direction[row][col] = 1;
     }
-    else
+    else if ((cost3 < cost2)&&(cost3 < cost1))
     {
         _costs[row][col] = cost3 + _costs[row - 1][col + 1];
         _direction[row][col] = -1;
+    }
+    else
+    {
+        _direction[row][col] = 0;
     }
 }
 void pathfinder::drawtables()
@@ -175,6 +188,14 @@ void pathfinder::drawtables()
         {
             costtoeast(i, j);
         }
+    }
+}
+void pathfinder::colorpaths(int r, int g, int b, int row, int col)
+{
+    if (col < _width - 1)
+    {
+        _image.set(row, col, r, g, b);
+        colorpaths(r, g, b, row + _direction[row][col], col + 1);
     }
 }
 
