@@ -114,6 +114,7 @@ int pathfinder::_draw_paths() {
     // based on the _use_recursion field, compute minimum cost for every point on map using either
     //  recursion or dynamic programming. Keep track of next move necessary to attain min cost.
     //  This will require additional data structures!
+    drawtables();
     int lowest_cost = 100000000;
     int lowest_cost_height = 0;
     for (int i = 0; i < _height; i++)
@@ -126,13 +127,14 @@ int pathfinder::_draw_paths() {
         }
 
     }
+    cout << lowest_cost << endl;
     colorpaths(255, 255, 0, lowest_cost_height, 0);
     return lowest_cost;
 }
 void pathfinder::costtoeast(int row, int col)
 {
     int cost1 =0, cost2=0, cost3=0;
-    if (col = _width - 1)
+    if (col == _width-1)
     {
         _costs[row][col] = 0;
         _direction[row][col] = 0;
@@ -183,7 +185,7 @@ void pathfinder::drawtables()
     
     for (int j = _width-1; j > 0; j--)
     {
-        for (int i = _height - 1; i > 0; i--)
+        for (int i = 0; i < _height; i++)
         {
             costtoeast(i, j);
         }
@@ -191,7 +193,7 @@ void pathfinder::drawtables()
 }
 void pathfinder::colorpaths(int r, int g, int b, int row, int col)
 {
-    if (col < _width - 1)
+    if (col < _width)
     {
         _image.set(row, col, r, g, b);
         colorpaths(r, g, b, row + _direction[row][col], col + 1);
