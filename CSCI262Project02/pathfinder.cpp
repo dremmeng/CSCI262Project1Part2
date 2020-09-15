@@ -123,11 +123,10 @@ int pathfinder::_draw_paths() {
         if (_costs[i][0] < lowest_cost)
         {
             lowest_cost = _costs[i][0];
- 
-         
+
+
             lowest_cost_height = i;
         }
-        cout << _costs[i][1] << endl;
     }
     cout << lowest_cost << endl;
     colorpaths(255, 255, 0, lowest_cost_height, 0);
@@ -143,10 +142,10 @@ void pathfinder::costtoeast(int row, int col)
     }
     else if (col < _width-1)
     {
-        cost1 = abs(_elevations[row][col] - _elevations[row][col + 1]);
+        cost1 = abs(_elevations[row][col] - _elevations[row][col + 1])+ _costs[row][col+1];
         if (row < _height - 1)
         {
-            cost2 = abs(_elevations[row][col] - _elevations[row + 1][col + 1]);
+            cost2 = abs(_elevations[row][col] - _elevations[row + 1][col + 1])+ _costs[row+1][col+1];
         }
         else
         {
@@ -154,7 +153,7 @@ void pathfinder::costtoeast(int row, int col)
         }
         if (row > 0)
         {
-            cost3 = abs(_elevations[row][col] - _elevations[row - 1][col + 1]);
+            cost3 = abs(_elevations[row][col] - _elevations[row - 1][col + 1])+ _costs[row-1][col+1];
         }
         else
         {
@@ -164,17 +163,17 @@ void pathfinder::costtoeast(int row, int col)
     if ((cost1 < cost2) && (cost1 < cost3))
     {
         
-        _costs[row][col]= cost1 + _costs[row][col + 1];
+        _costs[row][col]= cost1;
        _direction[row][col] = 0;
     }
     else if ((cost2 < cost1) && (cost2 < cost3))
     {
-        _costs[row][col] = cost2 + _costs[row+1][col+1];
+        _costs[row][col] = cost2;
         _direction[row][col] = 1;
     }
     else if ((cost3 < cost2)&&(cost3 < cost1))
     {
-        _costs[row][col] = cost3+ _costs[row - 1][col + 1];
+        _costs[row][col] = cost3;
         _direction[row][col] = -1;
     }
     else
@@ -185,9 +184,9 @@ void pathfinder::costtoeast(int row, int col)
 void pathfinder::drawtables()
 {
     
-    for (int j = _width-1; j > 0; j--)
+    for (int j = _width-1; j >= 0; j--)
     {
-        for (int i = 0; i < _height; i++)
+        for (int i = _height-1; i >= 0; i--)
         {
             costtoeast(i, j);
         }

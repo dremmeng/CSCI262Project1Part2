@@ -123,11 +123,10 @@ int pathfinder::_draw_paths() {
         if (_costs[i][0] < lowest_cost)
         {
             lowest_cost = _costs[i][0];
- 
-         
+
+
             lowest_cost_height = i;
         }
-        cout << _costs[i][1] << endl;
     }
     cout << lowest_cost << endl;
     colorpaths(255, 255, 0, lowest_cost_height, 0);
@@ -185,9 +184,9 @@ void pathfinder::costtoeast(int row, int col)
 void pathfinder::drawtables()
 {
     
-    for (int j = _width-1; j > 0; j--)
+    for (int j = _width-1; j >= 0; j--)
     {
-        for (int i = 0; i < _height; i++)
+        for (int i = _height-1; i >= 0; i--)
         {
             costtoeast(i, j);
         }
